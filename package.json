@@ -4,5 +4,6 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/stableinf/cloud-mem.git"
-    }
+    },
+    "main": "src/index.ts"
 }
