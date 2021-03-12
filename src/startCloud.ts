@@ -1,4 +1,4 @@
-import { Cloud } from '@stableinf/cloud';
+import { Cloud } from '@rotcare/cloud';
 import { apiGateway } from './apiGateway';
 import { startObjectStorage } from './startObjectStorage';
 

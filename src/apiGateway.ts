@@ -1,4 +1,4 @@
-import { ApiGateway, Serverless } from '@stableinf/cloud';
+import { ApiGateway, Serverless } from '@rotcare/cloud';
 import * as childProcess from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';

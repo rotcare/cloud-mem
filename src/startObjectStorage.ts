@@ -1,4 +1,4 @@
-import { ObjectStorage } from '@stableinf/cloud';
+import { ObjectStorage } from '@rotcare/cloud';
 import * as http from 'http';
 
 const memFs = new Map<string, string>();
