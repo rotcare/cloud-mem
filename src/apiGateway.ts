@@ -18,6 +18,8 @@ export const apiGateway: ApiGateway & Serverless = {
     createFunction: async () => {},
     createRoute: async (options) => {
         payload.routes[options.path] = options;
+    },
+    reload: async(options) => {
         const tmpPath = `/tmp/${options.projectPackageName.replace('/', '-')}`;
         const sharedLayerJsPath = `${tmpPath}.js`;
         fs.writeFileSync(sharedLayerJsPath, payload.sharedLayer);
@@ -29,7 +31,7 @@ export const apiGateway: ApiGateway & Serverless = {
         } else {
             startWorker([sharedLayerJsPath, routesJsonPath]);
         }
-    },
+    }
 };
 
 function startWorker(args: string[]) {
