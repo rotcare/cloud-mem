@@ -2,10 +2,11 @@ import { ApiGateway, Serverless } from '@rotcare/cloud';
 import * as childProcess from 'child_process';
 import * as path from 'path';
 import * as fs from 'fs';
+import fetch from 'node-fetch';
+import * as net from 'net';
 
 let payload = {
     sharedLayer: '',
-    routes: {} as Record<string, any>,
 };
 let worker: childProcess.ChildProcess | undefined;
 const pidPath = '/tmp/apiGateway_worker.pid';
@@ -16,20 +17,27 @@ export const apiGateway: ApiGateway & Serverless = {
         payload.sharedLayer = layerCode;
     },
     createFunction: async () => {},
+    invokeFunction: async (functionName: string) => {
+        while(true) {
+            if (await isPortReachable(3000)) {
+                break;
+            } else {
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+        }
+        await fetch(`http://localhost:3000/${functionName}`, { method: 'POST', body: '[[]]' });
+    },
     createRoute: async (options) => {
-        payload.routes[options.path] = options;
     },
     reload: async(options) => {
         const tmpPath = `/tmp/${options.projectPackageName.replace('/', '-')}`;
         const sharedLayerJsPath = `${tmpPath}.js`;
         fs.writeFileSync(sharedLayerJsPath, payload.sharedLayer);
-        const routesJsonPath = `${tmpPath}.json`;
-        fs.writeFileSync(routesJsonPath, JSON.stringify(payload.routes));
         if (worker) {
             fs.existsSync(pidPath) && fs.unlinkSync(pidPath);
             worker.kill();
         } else {
-            startWorker([sharedLayerJsPath, routesJsonPath]);
+            startWorker([sharedLayerJsPath]);
         }
     }
 };
@@ -53,3 +61,30 @@ function startWorker(args: string[]) {
         startWorker(args);
     });
 }
+
+async function isPortReachable(port: number) {
+	const promise = new Promise(((resolve, reject) => {
+		const socket = new net.Socket();
+
+		const onError = () => {
+			socket.destroy();
+			reject();
+		};
+
+		socket.setTimeout(500);
+		socket.once('error', onError);
+		socket.once('timeout', onError);
+
+		socket.connect(port, 'localhost', () => {
+			socket.end();
+			resolve(undefined);
+		});
+	}));
+
+	try {
+		await promise;
+		return true;
+	} catch (_) {
+		return false;
+	}
+};

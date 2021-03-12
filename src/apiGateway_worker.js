@@ -4,8 +4,6 @@ const SERVERLESS = { functions: {} };
 global.SERVERLESS = SERVERLESS;
 require(process.argv[2]);
 
-SERVERLESS.routes = require(process.argv[3]);
-
 const http = require('http');
 startServer();
 
@@ -22,14 +20,7 @@ async function handleRoute(req, resp) {
         resp.end('');
         return;
     }
-    const route = SERVERLESS.routes[req.url];
-    if (!route) {
-        const error = `no route defined for ${req.url}`;
-        console.warn(error);
-        resp.end(JSON.stringify({ error }));
-        return;
-    }
-    const func = SERVERLESS.functions[route.functionName];
+    const func = SERVERLESS.functions[req.url.substr(1)];
     if (!func) {
         const error = `no function defined for ${route.functionName}`;
         console.error(error);
