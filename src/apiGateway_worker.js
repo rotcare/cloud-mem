@@ -22,7 +22,7 @@ async function handleRoute(req, resp) {
     }
     const func = SERVERLESS.functions[req.url.substr(1)];
     if (!func) {
-        const error = `no function defined for ${route.functionName}`;
+        const error = `no function defined for ${req.url}`;
         console.error(error);
         resp.end(JSON.stringify({ error }));
         return;
