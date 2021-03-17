@@ -1,4 +1,4 @@
-const SERVERLESS = { functions: {} }; 
+const SERVERLESS = {}; 
 
 // 注入全局变量，让 require 的代码可以访问到，通过全局变量来提供返回值
 global.SERVERLESS = SERVERLESS;
